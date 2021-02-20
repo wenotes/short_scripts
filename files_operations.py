@@ -12,6 +12,7 @@ __version__ = '1.0'
 
 import argparse
 import os
+import sys
 import re
 import platform
 
@@ -27,10 +28,9 @@ parser.add_argument('-i', '--ignore-case', default=True, help='匹配忽略大�
 parser.add_argument('-p', '--path', default=pwd, help='操作文件夹的路径, 默认为当前路径')
 parser.add_argument('-c', '--create-dir', help='创建一个新的文件夹作为存储路径，也可以指定已存在的文件夹进行存放，默认当前文件夹')
 args = parser.parse_args()
-parser.print_help()
 
-rename = args.__dict__['rename'].strip()
-replace = args.__dict__['replace'].strip()
+rename = args.__dict__['rename']
+replace = args.__dict__['replace']
 path = args.__dict__['path']
 ignore_case = args.__dict__['ignore_case']
 create_dir = args.__dict__['create_dir']
@@ -78,14 +78,17 @@ def replace_files(old_replace, new_replace, pattern=r'.*'):
 					if re.match(pattern, file, flags=flags) and re.match(new_replace, file, flags=flags):
 						os.rename(abs_path, os.path.join(create_dir, file.replace(old_replace, new_replace)))
 
-if rename:
-	rename_list = rename.split(' ')
-	if len(rename_list)==1:
-		rename_list.append(r'.*')
-	rename_files(rename_list[0], rename_list[1])
-elif replace:
-	replace_list = replace.split(' ')
-	replace_files(replace_list[0], replace_list[1])
-else:
-	rename_list = ['%d', r'.*']
-	rename_files(rename_list[0], rename_list[1])
+if __name__ == '__main__':
+	if rename:
+		rename = rename.strip()
+		rename_list = rename.split(' ')
+		if len(rename_list)==1:
+			rename_list.append(r'.*')
+		rename_files(rename_list[0], rename_list[1])
+	elif replace:
+		replace = replace.strip()
+		replace_list = replace.split(' ')
+		replace_files(replace_list[0], replace_list[1])
+	else:
+		parser.print_help()
+		sys.exit(0)
