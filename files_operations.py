@@ -29,11 +29,11 @@ parser.add_argument('-p', '--path', default=pwd, help='操作文件夹的路径,
 parser.add_argument('-c', '--create-dir', help='创建一个新的文件夹作为存储路径，也可以指定已存在的文件夹进行存放，默认当前文件夹')
 args = parser.parse_args()
 
-rename = args.__dict__['rename']
-replace = args.__dict__['replace']
-path = args.__dict__['path']
-ignore_case = args.__dict__['ignore_case']
-create_dir = args.__dict__['create_dir']
+rename = args.rename
+replace = args.replace
+path = args.path
+ignore_case = args.ignore_case
+create_dir = args.create_dir
 if ignore_case:
     flags=re.IGNORECASE
 if create_dir:
