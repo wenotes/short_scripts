@@ -21,7 +21,7 @@ pwd = os.getcwd()
 
 parser = argparse.ArgumentParser(description='批量地干活')
 parser.add_argument('-r', '--rename', type=str,
-					help='-r "test%%02d.jpg .*.jpg" ==> 将所有符合.*.jpg的文件名称修改为test开头的文件名，第一个文件为test00.jpg')
+                    help='-r "test%%02d.jpg .*.jpg" ==> 将所有符合.*.jpg的文件名称修改为test开头的文件名，第一个文件为test00.jpg')
 parser.add_argument('-R', '--replace', help='替换文件名称中的一些字符，例：-R "x y" 将名称中的x替换成y')
 parser.add_argument('-m', '--match', help='匹配符合的文件进行操作')
 parser.add_argument('-i', '--ignore-case', default=True, help='匹配忽略大小写')
@@ -35,60 +35,60 @@ path = args.__dict__['path']
 ignore_case = args.__dict__['ignore_case']
 create_dir = args.__dict__['create_dir']
 if ignore_case:
-	flags=re.IGNORECASE
+    flags=re.IGNORECASE
 if create_dir:
-	if not os.path.exists(create_dir):
-		os.mkdir(create_dir)
+    if not os.path.exists(create_dir):
+        os.mkdir(create_dir)
 else:
-	create_dir=path
+    create_dir=path
 
 def rename_files(target, pattern=r'.*'):
-	if platform_name in ['linux','unix']:
-		for root, dirs, files in os.walk(path):
-			for i, file in enumerate(files):
-				abs_path = os.path.join(root, file)
-				if abs_path == os.path.abspath(__file__) or file.startswith('.'):  # 避免修改自己和隐藏文件(目前只支持linux隐藏文件)
-					continue
-				if re.match(pattern, file, flags=flags):
-					os.rename(abs_path, os.path.join(create_dir, target%(i+1)))
-	else:
-		for root, dirs, files in os.walk(path):
-			for i, file in enumerate(files):
-				abs_path = os.path.join(root, file)
-				if abs_path == os.path.abspath(__file__):  # 避免修改自己
-					continue
-				if re.match(pattern, file, flags=flags):
-					os.rename(abs_path, os.path.join(create_dir, target%(i+1)))
+    if platform_name in ['linux','unix']:
+        for root, dirs, files in os.walk(path):
+            for i, file in enumerate(files):
+                abs_path = os.path.join(root, file)
+                if abs_path == os.path.abspath(__file__) or file.startswith('.'):  # 避免修改自己和隐藏文件(目前只支持linux隐藏文件)
+                    continue
+                if re.match(pattern, file, flags=flags):
+                    os.rename(abs_path, os.path.join(create_dir, target%(i+1)))
+    else:
+        for root, dirs, files in os.walk(path):
+            for i, file in enumerate(files):
+                abs_path = os.path.join(root, file)
+                if abs_path == os.path.abspath(__file__):  # 避免修改自己
+                    continue
+                if re.match(pattern, file, flags=flags):
+                    os.rename(abs_path, os.path.join(create_dir, target%(i+1)))
 
 def replace_files(old_replace, new_replace, pattern=r'.*'):
-	if platform_name in ['linux','unix']:
-		for root, dirs, files in os.walk(path):
-				for file in files:
-					abs_path = os.path.join(root, file)
-					if abs_path == os.path.abspath(__file__) or file.startswith('.'):
-						continue
-					if re.match(pattern, file, flags=flags) and re.match(new_replace, file, flags=flags):
-						os.rename(abs_path, os.path.join(create_dir, file.replace(old_replace, new_replace)))
-	else:
-		for root, dirs, files in os.walk(path):
-				for file in files:
-					abs_path = os.path.join(root, file)
-					if abs_path == os.path.abspath(__file__):
-						continue
-					if re.match(pattern, file, flags=flags) and re.match(new_replace, file, flags=flags):
-						os.rename(abs_path, os.path.join(create_dir, file.replace(old_replace, new_replace)))
+    if platform_name in ['linux','unix']:
+        for root, dirs, files in os.walk(path):
+                for file in files:
+                    abs_path = os.path.join(root, file)
+                    if abs_path == os.path.abspath(__file__) or file.startswith('.'):
+                        continue
+                    if re.match(pattern, file, flags=flags) and re.match(new_replace, file, flags=flags):
+                        os.rename(abs_path, os.path.join(create_dir, file.replace(old_replace, new_replace)))
+    else:
+        for root, dirs, files in os.walk(path):
+                for file in files:
+                    abs_path = os.path.join(root, file)
+                    if abs_path == os.path.abspath(__file__):
+                        continue
+                    if re.match(pattern, file, flags=flags) and re.match(new_replace, file, flags=flags):
+                        os.rename(abs_path, os.path.join(create_dir, file.replace(old_replace, new_replace)))
 
 if __name__ == '__main__':
-	if rename:
-		rename = rename.strip()
-		rename_list = rename.split(' ')
-		if len(rename_list)==1:
-			rename_list.append(r'.*')
-		rename_files(rename_list[0], rename_list[1])
-	elif replace:
-		replace = replace.strip()
-		replace_list = replace.split(' ')
-		replace_files(replace_list[0], replace_list[1])
-	else:
-		parser.print_help()
-		sys.exit(0)
+    if rename:
+        rename = rename.strip()
+        rename_list = rename.split(' ')
+        if len(rename_list)==1:
+            rename_list.append(r'.*')
+        rename_files(rename_list[0], rename_list[1])
+    elif replace:
+        replace = replace.strip()
+        replace_list = replace.split(' ')
+        replace_files(replace_list[0], replace_list[1])
+    else:
+        parser.print_help()
+        sys.exit(0)
